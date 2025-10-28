@@ -2,15 +2,15 @@
 title: "Práctica 3 y 4. Preparación y manejo de Datos"
 subtitle: "Análisis Exploratorio de Datos, Máster en Ciencia de Datos - UV"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+    number_sections: no
   html_document:
     echo: yes
     number_sections: no
     theme: lumen
     toc: yes
-  pdf_document:
-    toc: yes
-    toc_depth: 3
-    number_sections: no
 ---
 
 ```{r setup, cache=F, echo=F, message=F, warning=F, tidy=F}
@@ -207,8 +207,16 @@ Para convertir este conjunto a formato _tidy_ tendremos que agrupar todas las co
 Convierte el dataset `pew_religion` a formato _tidy_ usando `gather`. La columna `income` debe contener una variable de tipo `factor`.
 
 ```{r}
+print(load("data/pew_religion.Rdata"))
 
+pew_tidy<-gather(pew_religion,key="income",value="freq",-religion)
 
+income_levels<-c("<$10k", "$10-20k", "$20-30k", "$30-40k", "$40-50k", 
+                   "$50-75k", "$75-100k", "$100-150k", ">150k")
+
+pew_tidy$income<-factor(pew_tidy$income, levels = income_levels)
+
+head(pew_tidy)
 ```
 
 Otro ejemplo usando el conjunto de datos `Billboard` que muestra cuando una canción entró en el top 100.
@@ -229,7 +237,10 @@ Obtén la versión _tidy_ de este conjunto de datos usando `pivot_longer`.
 Consejo: puedes eliminar el prefijo `wk` de las semanas mediante el argumento `names_prefix`. Opcionalmente puedes crear una columna `date` a partir de `date.entered`, sumando las semanas transcurridas desde la fecha de entrada en lista.
 
 ```{r}
+load("data/billboard.Rdata")
+billboard_tidy<-raw%>%pivot_longer(cols=starts_with("wk"),names_to="week", values_to="rank", names_prefix="wk")%>%mutate(week=as.integer(week))
 
+head(billboard_tidy)
 
 ```
 
@@ -252,7 +263,13 @@ Para pasar a formato _tidy_ necesitamos realizar dos operaciones en este caso. E
 Convierte el conjunto de datos TB en _tidy_ utilizando `gather` y `separate`.
 
 ```{r}
+load('data/tb.Rdata')
 
+tb_tidy<-raw%>%
+  gather(key="demographic",value="cases",-country,-year,na.rm=TRUE)%>%
+  separate(demographic,into=c("sex","age"),sep=1)
+
+head(tb_tidy)
 ```
 
 
@@ -274,7 +291,10 @@ Para obtener la versión _tidy_ primero juntamos todos los días en una variable
 Obtén la versión _tidy_ del conjunto de datos `weather` utilizando las funciones `pivot_longer` y `pivot_wider`. Además cambiaremos las columnas `year`, `month` y `dia` por una única variable `fecha`. Para que la operación `pivot_wider` no de error tendremos que eliminar los NA's cuando usemos `pivot_longer`.
 
 ```{r}
+load("data/weather.Rdata")
 
+weather_tidy<-raw%>%
+  pivot_longer(cols=starts_with("d"),names_to="day",values_to="value",names_prefix="d",values_drop_na=TRUE)
 
 ```
 
