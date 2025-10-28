@@ -408,9 +408,9 @@ Incorpora una nueva variable a `flights` denominado `Full_Date` que sea de tipo 
 # Crear la variable Full_Date y eliminar variables originales
 flights <- flights %>%
   mutate(
-    Full_Date = paste(day, month, year, sep = "-")  # Formato d-m-Y
+    Full_Date = paste(day, month, year.x, sep = "-")  # Formato d-m-Y
   ) %>%
-  select(-year, -month, -day)  # Eliminar las variables originales
+  select(-year.x, -month, -day)  # Eliminar las variables originales
 
 ```
 
